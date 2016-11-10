@@ -29,5 +29,5 @@ build:
     - if [ "$TAG_NAME" != "" ]; then export RELEASE_KEY="$TAG_NAME.zip"; fi
     - cp build/test-results/*.xml shippable/testresults
     - aws deploy push --application-name $CD_APP_NAME --s3-location s3://$CD_BUCKET/$CD_KEY --ignore-hidden-files --source build/install/elo-api
-    - if [ "$TAG_NAME" != "" ]; then aws deploy push --application-name $CD_APP_NAME --s3-location s3://$CD_BUCKET/$RELEASE_KEY --ignore-hidden-files --source build/install/elo; fi
+    - if [ "$TAG_NAME" != "" ]; then aws deploy push --application-name $CD_APP_NAME --s3-location s3://$CD_BUCKET/$RELEASE_KEY --ignore-hidden-files --source build/install/elo-api; fi
     - if [ "$TAG_NAME" != "" ]; then aws deploy create-deployment --application-name $CD_APP_NAME --s3-location bucket=$CD_BUCKET,key=$RELEASE_KEY,bundleType=zip --deployment-group-name $CD_DEPLOYMENT_GROUP; fi

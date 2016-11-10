@@ -2,6 +2,7 @@ package com.github.wakingrufus.elo.league;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConvertedEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +21,7 @@ public class LeagueRecord {
     private int startingRating;
     private int xi;
     private int kFactor;
+    @DynamoDBTypeConvertedEnum
     private GameType gameType;
     private int trialPeriod;
     private int trialKFactorMultiplier;

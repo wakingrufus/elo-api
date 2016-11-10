@@ -54,11 +54,6 @@ public class LeagueRecordTest {
         Assert.assertEquals("converts populated object correctly", expected, actual);
     }
 
-    @Test
-    public void testLombok() {
-        LeagueRecord leagueRecord = LeagueRecord.builder().build();
-        LeagueRecord leagueRecord2 = leagueRecord.toBuilder().build();
-        Assert.assertEquals(leagueRecord.hashCode(), leagueRecord2.hashCode());
-    }
+
 
 }

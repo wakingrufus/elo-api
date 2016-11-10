@@ -48,4 +48,11 @@ public class LeagueTest {
         // round trip
         Assert.assertEquals("converts populated object", expected, actual);
     }
+
+    @Test
+    public void testLombok() {
+        League league = League.builder().build();
+        League league2 = league.toBuilder().build();
+        Assert.assertEquals(league.hashCode(), league2.hashCode());
+    }
 }
