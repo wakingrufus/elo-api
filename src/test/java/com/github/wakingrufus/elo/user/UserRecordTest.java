@@ -12,21 +12,39 @@ public class UserRecordTest {
     public void toDto() throws Exception {
 
         // empty object
-        UserRecord expected = UserRecord.builder().build();
-        User converted = expected.toDto();
-        UserRecord actual = converted.toRecord();
+        // populated object
+        User expected = User.builder().build();
+        UserRecord input = UserRecord.builder().build();
+        User actual = input.toDto();
         Assert.assertEquals("empty object converts correctly", expected, actual);
 
         // populated object
-        expected = UserRecord.builder()
-                .id(UUID.randomUUID().toString())
-                .email("email")
-                .name("name")
-                .password("password")
+        String id = UUID.randomUUID().toString();
+        String email = "email";
+        String name = "name";
+        String password = "password";
+        expected = User.builder()
+                .id(id)
+                .email(email)
+                .name(name)
+                .password(password)
                 .build();
-        converted = expected.toDto();
-        actual = converted.toRecord();
+        input = UserRecord.builder()
+                .id(id)
+                .email(email)
+                .name(name)
+                .password(password)
+                .build();
+        actual = input.toDto();
         Assert.assertEquals("populated object converts correctly", expected, actual);
+    }
+
+    @Test
+    public void testLombok() {
+        User instance = User.builder().build();
+        User instance2 = instance.toBuilder().build();
+        Assert.assertEquals(instance.hashCode(), instance2.hashCode());
+        Assert.assertEquals(instance, instance2);
     }
 
 }
