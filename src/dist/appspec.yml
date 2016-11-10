@@ -1,0 +1,13 @@
+version: 0.0
+os: linux
+
+hooks:
+    AfterInstall:
+    -  location: java-install.sh
+       runas: root
+    ApplicationStart:
+    -  location: start.sh
+    ApplicationStop:
+    -  location: stop.sh
+    ValidateService:
+    -  location: validate.sh

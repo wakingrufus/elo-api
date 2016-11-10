@@ -1,0 +1,32 @@
+language: java
+
+jdk:
+    - oraclejdk8
+
+env:
+  global:
+    - AWS_DEFAULT_REGION=us-west-2
+    - CD_APP_NAME=elo CD_DEPLOYMENT_GROUP=elo
+    - CD_BUCKET=elo-release CD_KEY=latest.zip
+    - AWS_ACCESS_KEY_ID=AKIAJQC2HFAVPVBVA2IQ
+    - AWS_DEFAULT_REGION=us-west-2
+    - secure: s7iNmuXRB7q1WK99TvV5VU4ABbQrLGAw8J33B6qR6+1Nc9+bqCCMBoyxOV3ZN9wnIZPKzhFKEkJYO7mINAATb/if1UourS/eQHenKG7VZtAdWNM98BcLv8JeztrK3vkkNXHKK3mQpWJEJjexLqWk03pILOiLgFDI5hHkBuR5+HDamIVDAKkFhmNPVFwLaYZHlON7744nuG7/OBi1GCxFm+9t/Nya9Lkf50MnSH24gxTc1usDwarLZSbrBX07GUnFNdjhYZdWwRthtzjcUdxpP/9reC+hZe008+AfBVXKFyjNUuJ6ihpUUY9muilLq6q96KFBztHK63inyjPf3TKglQ==
+
+# Create directories for test and coverage reports
+before_build:
+  - mkdir -p shippable/testresults
+  - mkdir -p shippable/codecoverage
+  - rm -rf build
+
+build:
+  ci:
+    - gradle clean test jacocoTestReport integrationTest installDist
+  on_failure:
+    - cp build/test-results/*.xml shippable/testresults
+  on_success:
+    - export TAG_NAME=`git describe --exact-match --tags HEAD`
+    - if [ "$TAG_NAME" != "" ]; then export RELEASE_KEY="$TAG_NAME.zip"; fi
+    - cp build/test-results/*.xml shippable/testresults
+    - aws deploy push --application-name $CD_APP_NAME --s3-location s3://$CD_BUCKET/$CD_KEY --ignore-hidden-files --source build/install/elo
+    - if [ "$TAG_NAME" != "" ]; then aws deploy push --application-name $CD_APP_NAME --s3-location s3://$CD_BUCKET/$RELEASE_KEY --ignore-hidden-files --source build/install/elo; fi
+    - if [ "$TAG_NAME" != "" ]; then aws deploy create-deployment --application-name $CD_APP_NAME --s3-location bucket=$CD_BUCKET,key=$RELEASE_KEY,bundleType=zip --deployment-group-name $CD_DEPLOYMENT_GROUP; fi

@@ -1,0 +1,102 @@
+plugins {
+    id "java"
+    id "application"
+    id "idea"
+    id "jacoco"
+}
+
+
+mainClassName = 'com.github.wakingrufus.elo.Main'
+group = 'com.github.wakingrufus'
+version = '0.1.0'
+
+repositories {
+
+    mavenCentral()
+    maven { url 'http://clojars.org/repo' }
+    maven { url 'http://dynamodb-local.s3-website-us-west-2.amazonaws.com/release'}
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "$mainClassName"
+    }
+}
+
+dependencies {
+    compile group: 'io.swagger', name: 'swagger-jersey2-jaxrs', version: '1.5.+'
+    compile 'org.webjars:swagger-ui:2.+'
+    compile "metosin:ring-swagger-ui:2.+"
+    compile 'org.slf4j:slf4j-log4j12:1.7.+'
+
+    compile 'com.fasterxml.jackson.module:jackson-module-parameter-names:2.7.+'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.7.+'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.7.+'
+    compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.7.+'
+    compile (group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jaxrs', version: '2.+'){
+        exclude group: 'com.fasterxml.jackson.core'
+    }
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.7.+'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.7.+'
+
+
+    compile group: 'org.glassfish.grizzly', name: 'grizzly-http-server', version: '2.+'
+    compile group: 'org.glassfish.jersey.containers', name: 'jersey-container-grizzly2-http', version: '2.+'
+    compile group: 'org.glassfish.jersey.containers', name: 'jersey-container-grizzly2-servlet', version: '2.+'
+    compile 'org.projectlombok:lombok:1.+'
+    compile group: 'com.amazonaws', name: 'aws-java-sdk-dynamodb', version: '1.+'
+
+    compile 'org.glassfish.hk2:hk2-metadata-generator:2.+'
+
+    compile 'com.google.maps:google-maps-services:+'
+
+    testCompile group: 'org.glassfish.jersey.core', name: 'jersey-client', version: '2.+'
+    testCompile group: 'junit', name: 'junit', version: '4.+'
+
+    testCompile 'com.amazonaws:DynamoDBLocal:1.+'
+    testRuntime('com.almworks.sqlite4java:sqlite4java')
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-parameters'
+}
+
+sourceSets {
+    integrationTest {
+        java {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+        }
+        resources.srcDir file('./src/integrationTest/resources')
+    }
+}
+
+configurations {
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+}
+
+idea {
+    module {
+        testSourceDirs += file('./src/integrationTest/java')
+    }
+}
+
+task integrationTest(type: Test, dependsOn: 'test') {
+    testClassesDir = sourceSets.integrationTest.output.classesDir
+    classpath = sourceSets.integrationTest.runtimeClasspath
+
+}
+
+task copyRuntimeLibs(type: Copy) {
+    into file('build/resources/test/lib')
+    from configurations.testRuntime
+}
+
+test.dependsOn copyRuntimeLibs
+
+distZip {
+    into('/') {
+        from 'deploy'
+    }
+}
