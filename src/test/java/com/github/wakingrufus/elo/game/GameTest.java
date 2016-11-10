@@ -2,13 +2,17 @@ package com.github.wakingrufus.elo.game;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.wakingrufus.elo.tech.ObjectMapperFactory;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Date;
+import java.util.UUID;
 
 @Slf4j
 public class GameTest {
@@ -16,16 +20,30 @@ public class GameTest {
     public void toRecord() throws Exception {
 
         // empty object
-        Game expected = Game.builder().build();
-        GameRecord converted = expected.toRecord();
-        Game actual = converted.toDto();
+        log.info("test empty object");
+        GameRecord expected = GameRecord.builder().build();
+        Game input = Game.builder().build();
+        GameRecord actual = input.toRecord();
         Assert.assertEquals("empty object converts correctly", expected, actual);
 
         // populated object
-        expected = Game.builder().entryDate(ZonedDateTime.now(ZoneOffset.UTC)).build();
-        converted = expected.toRecord();
-        actual = converted.toDto();
-        Assert.assertEquals("populated object converts correctly", expected, actual);
+        log.info("test populated object");
+        String id = UUID.randomUUID().toString();
+        Date entryDate = Date.from(Instant.now());
+        ZonedDateTime entryDateZoned = ZonedDateTime.from(entryDate.toInstant().atZone(ZoneOffset.UTC));
+        expected = GameRecord.builder()
+                .id(id)
+                .entryDate(entryDate)
+                .build();
+        input = Game.builder()
+                .id(id)
+                .entryDate(entryDateZoned)
+                .build();
+        actual = input.toRecord();
+        log.info("expected: " + expected.toString());
+        log.info("actual:   " + actual.toString());
+        Assert.assertEquals("converts entryDate correctly", expected.getEntryDate(), actual.getEntryDate());
+        Assert.assertEquals("converts populated object correctly", expected, actual);
     }
 
     @Test

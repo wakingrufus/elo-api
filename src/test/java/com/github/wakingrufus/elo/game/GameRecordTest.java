@@ -4,8 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.UUID;
 
 @Slf4j
 public class GameRecordTest {
@@ -13,16 +15,29 @@ public class GameRecordTest {
     public void toDto() throws Exception {
 
         // empty object
-        GameRecord gameRecord = GameRecord.builder().build();
-        Game game = gameRecord.toDto();
-        GameRecord actual = game.toRecord();
-        Assert.assertEquals("empty object converts correctly", gameRecord, actual);
+        Game expected = Game.builder().build();
+        GameRecord input = GameRecord.builder().build();
+        Game actual = input.toDto();
+        Assert.assertEquals("empty object converts correctly", expected, actual);
 
         // populated object
-        gameRecord = GameRecord.builder().entryDate(Date.from(Instant.now())).build();
-        game = gameRecord.toDto();
-        actual = game.toRecord();
-        Assert.assertEquals("populated object converts correctly", gameRecord, actual);
+        String id = UUID.randomUUID().toString();
+        ZonedDateTime expectedEntryDate = ZonedDateTime.now(ZoneOffset.UTC);
+        Date inputEntryDate = Date.from(expectedEntryDate.toInstant());
+        expected = Game.builder()
+                .id(id)
+                .team1Score(1)
+                .entryDate(expectedEntryDate)
+                .build();
+        input = GameRecord.builder()
+                .id(id)
+                .team1Score(1)
+                .entryDate(inputEntryDate)
+                .build();
+        actual = input.toDto();
+        log.info("expected: " + expected.toString());
+        log.info("actual:   " + actual.toString());
+        Assert.assertEquals("populated object converts correctly", expected, actual);
     }
 
 
