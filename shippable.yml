@@ -6,7 +6,7 @@ jdk:
 env:
   global:
     - AWS_DEFAULT_REGION=us-west-2
-    - CD_APP_NAME=elo CD_DEPLOYMENT_GROUP=elo
+    - CD_APP_NAME=elo-api CD_DEPLOYMENT_GROUP=elo-api
     - CD_BUCKET=elo-release CD_KEY=latest.zip
     - AWS_ACCESS_KEY_ID=AKIAJQC2HFAVPVBVA2IQ
     - AWS_DEFAULT_REGION=us-west-2

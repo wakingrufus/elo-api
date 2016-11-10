@@ -36,12 +36,16 @@ public class LeagueTest {
                 .id(id)
                 .kfactorBase(kFactor)
                 .build();
+        LeagueRecord expected = LeagueRecord.builder()
+                .id(id)
+                .kFactor(kFactor)
+                .build();
         LeagueRecord actual = input.toRecord();
         Assert.assertEquals("copies id value", id, actual.getId());
         Assert.assertEquals("copies kfactor value", kFactor, actual.getKFactor());
 
 
         // round trip
-        Assert.assertEquals("round trip retains all data", input, actual.toDto());
+        Assert.assertEquals("converts populated object", expected, actual);
     }
 }
