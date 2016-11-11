@@ -117,8 +117,8 @@ public class GameServiceTest {
                 .calculate(eq(player1Kfactor), team1ActualScoreCaptor.capture(), eq(team1ExpectedScoreRatio));
         Assert.assertEquals("correct team1 score", 0, expectedTeam1ActualScore.compareTo(team1ActualScoreCaptor.getValue()));
         Assert.assertEquals("correct team2 score", 0, expectedTeam2ActualScore.compareTo(team2ActualScoreCaptor.getValue()));
-        Mockito.verify(playerService, Mockito.times(1)).update(player1, player1Adjustment, 1, 1, 0);
-        Mockito.verify(playerService, Mockito.times(1)).update(player2, player2Adjustment, 1, 0, 1);
+        Mockito.verify(playerService, Mockito.times(1)).update(player1.getId(), player1Adjustment, 1, 1, 0);
+        Mockito.verify(playerService, Mockito.times(1)).update(player2.getId(), player2Adjustment, 1, 0, 1);
 
     }
 

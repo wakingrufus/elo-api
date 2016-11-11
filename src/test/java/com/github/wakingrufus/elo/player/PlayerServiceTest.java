@@ -40,7 +40,30 @@ public class PlayerServiceTest {
 
     @Test
     public void update() throws Exception {
+        // data
+        String id = UUID.randomUUID().toString();
+        int ratingAdjustment = 32;
+        int newGames = 1;
+        int newWins = 1;
+        int newLosses = 0;
+        PlayerRecord existingRecord = PlayerRecord.builder()
+                .id(id)
+                .currentRating(1200)
+                .gamesPlayed(1)
+                .wins(1)
+                .losses(0)
+                .build();
 
+        // mocks
+        PlayerDao playerDao = Mockito.mock(PlayerDao.class);
+        PlayerLookupDao playerLookupDao = Mockito.mock(PlayerLookupDao.class);
+        Mockito.when(playerDao.update(Mockito.any(PlayerRecord.class))).then(AdditionalAnswers.returnsFirstArg());
+        Mockito.when(playerDao.findOne(id)).thenReturn(existingRecord);
+
+        PlayerService instance = new PlayerService(playerDao, playerLookupDao);
+        Player updated = instance.update(id, ratingAdjustment, newGames, newWins, newLosses);
+
+        Assert.assertEquals(existingRecord.getCurrentRating() + ratingAdjustment, updated.getCurrentRating());
     }
 
     @Test

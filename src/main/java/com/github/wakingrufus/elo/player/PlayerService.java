@@ -41,14 +41,19 @@ public class PlayerService {
         return createdRecord.toDto();
     }
 
-    public Player update(Player player, int ratingAdjustment, int games, int wins, int losses) {
-        Player newPlayer = player.toBuilder()
-                .currentRating(player.getCurrentRating() + ratingAdjustment)
-                .gamesPlayed(player.getGamesPlayed() + games)
-                .wins(player.getWins() + wins)
-                .losses(player.getLosses() + losses)
-                .build();
-        return playerDao.update(newPlayer.toRecord()).toDto();
+    public Player update(String playerId, int ratingAdjustment, int games, int wins, int losses) {
+        Player updated = null;
+        PlayerRecord existingRecord = playerDao.findOne(playerId);
+        if (existingRecord != null) {
+            PlayerRecord toUpdate = existingRecord.toBuilder()
+                    .currentRating(existingRecord.getCurrentRating() + ratingAdjustment)
+                    .gamesPlayed(existingRecord.getGamesPlayed() + games)
+                    .wins(existingRecord.getWins() + wins)
+                    .losses(existingRecord.getLosses() + losses)
+                    .build();
+            updated = playerDao.update(toUpdate).toDto();
+        }
+        return updated;
     }
 
     public Player reset(Player player, int rating) {

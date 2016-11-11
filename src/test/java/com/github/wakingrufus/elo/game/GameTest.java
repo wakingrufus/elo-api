@@ -2,7 +2,6 @@ package com.github.wakingrufus.elo.game;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.wakingrufus.elo.tech.ObjectMapperFactory;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
@@ -56,5 +55,12 @@ public class GameTest {
         Assert.assertEquals(expected, actual);
 
 
+    }
+
+    @Test
+    public void testLombok() {
+        Game game = Game.builder().build();
+        Game game2 = game.toBuilder().build();
+        Assert.assertEquals(game.hashCode(), game2.hashCode());
     }
 }

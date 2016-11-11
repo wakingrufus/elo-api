@@ -8,7 +8,7 @@ plugins {
 
 mainClassName = 'com.github.wakingrufus.elo.Main'
 group = 'com.github.wakingrufus'
-version = '0.2.1'
+version = '0.2.2'
 
 repositories {
 

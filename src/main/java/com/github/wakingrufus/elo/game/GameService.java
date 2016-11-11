@@ -142,7 +142,7 @@ public class GameService {
             log.debug("using kfactor: " + kFactor);
             int adjustment = adjustmentCalculator.calculate(kFactor, team1ActualScore, team1ExpectedScoreRatio);
             log.debug("adjustment: " + adjustment);
-            playerService.update(player, adjustment, 1, team1Wins, team1Losses);
+            playerService.update(player.getId(), adjustment, 1, team1Wins, team1Losses);
             RatingHistoryItem toCreate = RatingHistoryItem.builder()
                     .id(UUID.randomUUID().toString())
                     .gameId(game.getId())
@@ -160,7 +160,7 @@ public class GameService {
             log.debug("using kfactor: " + kFactor);
             int adjustment = adjustmentCalculator.calculate(kFactor, team2ActualScore, team2ExpectedScoreRatio);
             log.debug("adjustment: " + adjustment);
-            playerService.update(player, adjustment, 1, team2Wins, team2Losses);
+            playerService.update(player.getId(), adjustment, 1, team2Wins, team2Losses);
             RatingHistoryItem toCreate = RatingHistoryItem.builder()
                     .gameId(game.getId())
                     .playerId(player.getId())
