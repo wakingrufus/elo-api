@@ -1,5 +1,6 @@
 package com.github.wakingrufus.elo;
 
+import com.github.wakingrufus.elo.tech.IpFinder;
 import io.swagger.jaxrs.config.BeanConfig;
 import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -13,13 +14,15 @@ import java.net.URI;
 
 public class Main {
     public static void main(String[] args) {
+        IpFinder ipFinder = new IpFinder();
+        String host = ipFinder.findIp() + ":9005";
 
         String BASE_URI = "http://0.0.0.0:9005/elo-api/";
 
         BeanConfig beanConfig = new BeanConfig();
         beanConfig.setVersion("BETA");
         beanConfig.setSchemes(new String[]{"http"});
-        beanConfig.setHost("localhost:9005");
+        beanConfig.setHost(host);
         beanConfig.setBasePath("/elo-api");
         beanConfig.setResourcePackage("com.github.wakingrufus.elo.api");
         beanConfig.setTitle("ELO API");
