@@ -40,5 +40,12 @@ public class GameRecordTest {
         Assert.assertEquals("populated object converts correctly", expected, actual);
     }
 
+    @Test
+    public void testLombok() {
+        GameRecord instance = GameRecord.builder().id(UUID.randomUUID().toString()).build();
+        GameRecord instance2 = instance.toBuilder().build();
+        Assert.assertEquals(instance.hashCode(), instance2.hashCode());
+        Assert.assertEquals(instance, instance2);
+    }
 
 }

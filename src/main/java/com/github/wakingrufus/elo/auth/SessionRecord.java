@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-@DynamoDBTable(tableName = "Player")
+@DynamoDBTable(tableName = "EloSession")
 public class SessionRecord {
     @DynamoDBHashKey
     private String id;

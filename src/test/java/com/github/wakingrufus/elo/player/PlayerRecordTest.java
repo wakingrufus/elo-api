@@ -51,4 +51,12 @@ public class PlayerRecordTest {
         Assert.assertEquals(expected, actual);
     }
 
+    @Test
+    public void testLombok() {
+        PlayerRecord instance = PlayerRecord.builder().id(UUID.randomUUID().toString()).build();
+        PlayerRecord instance2 = instance.toBuilder().build();
+        Assert.assertEquals(instance.hashCode(), instance2.hashCode());
+        Assert.assertEquals(instance, instance2);
+    }
+
 }

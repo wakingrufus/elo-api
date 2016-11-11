@@ -14,15 +14,15 @@ import java.net.URI;
 public class Main {
     public static void main(String[] args) {
 
-        String BASE_URI = "http://0.0.0.0:9005/elo/";
+        String BASE_URI = "http://0.0.0.0:9005/elo-api/";
 
         BeanConfig beanConfig = new BeanConfig();
         beanConfig.setVersion("BETA");
         beanConfig.setSchemes(new String[]{"http"});
         beanConfig.setHost("localhost:9005");
-        beanConfig.setBasePath("/arpg");
-        beanConfig.setResourcePackage("com.github.wakingrufus.arpg.api");
-        beanConfig.setTitle("ARPG API");
+        beanConfig.setBasePath("/elo-api");
+        beanConfig.setResourcePackage("com.github.wakingrufus.elo.api");
+        beanConfig.setTitle("ELO API");
         beanConfig.setScan(true);
 
         //   ServletContainer sc = new ServletContainer(new JerseyApplication());

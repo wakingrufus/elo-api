@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-@DynamoDBTable(tableName = "Game")
+@DynamoDBTable(tableName = "EloGame")
 public class GameRecord {
     @DynamoDBHashKey
     private String id;

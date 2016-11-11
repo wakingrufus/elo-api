@@ -95,14 +95,14 @@ public class IntegrationTest {
         }
         // create user
         log.info("Create a user");
-        WebTarget target = client.target(baseUrl).path("elo/user");
+        WebTarget target = client.target(baseUrl).path("elo-api/user");
         User createdUser = target.request(MediaType.APPLICATION_JSON_TYPE)
                 .post(Entity.entity(user, MediaType.APPLICATION_JSON_TYPE), User.class);
         Assert.assertEquals("create user returns 201", user.getEmail(), createdUser.getEmail());
 
         // get by id (unauth)
         log.info("fetch a user while not logged in");
-        target = client.target(baseUrl).path("elo/user/" + createdUser.getId());
+        target = client.target(baseUrl).path("elo-api/user/" + createdUser.getId());
         Response response = target.request(MediaType.APPLICATION_JSON_TYPE).get(Response.class);
         Assert.assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
 
@@ -110,28 +110,28 @@ public class IntegrationTest {
         // create session
         log.info("log in");
         LoginRequest loginRequest = new LoginRequest("pass", "wakingrufus@gmail.com");
-        target = client.target(baseUrl).path("elo/session");
+        target = client.target(baseUrl).path("elo-api/session");
         Session createdSession = target.request(MediaType.APPLICATION_JSON_TYPE)
                 .post(Entity.entity(loginRequest, MediaType.APPLICATION_JSON_TYPE), Session.class);
         log.info("Session id:" + createdSession.getId());
 
         // get by id (auth)
         log.info("get by user id (authorized)");
-        target = client.target(baseUrl).path("elo/user/" + createdUser.getId());
+        target = client.target(baseUrl).path("elo-api/user/" + createdUser.getId());
         User getUser = target.request(MediaType.APPLICATION_JSON_TYPE).header("Authorization", "Bearer " + createdSession.getId())
                 .get(User.class);
         Assert.assertNotNull("user is found", getUser);
         Assert.assertEquals(user.getEmail(), getUser.getEmail());
 
         log.info("log out");
-        target = client.target(baseUrl).path("elo/session/" + createdSession.getId());
+        target = client.target(baseUrl).path("elo-api/session/" + createdSession.getId());
         Response logoutResponse = target.request(MediaType.APPLICATION_JSON_TYPE)
                 .header("Authorization", "Bearer " + createdSession.getId()).delete();
         Assert.assertEquals("logout returns 204", 204, logoutResponse.getStatus());
 
 
         log.info("fetch a user after logout");
-        target = client.target(baseUrl).path("elo/user/" + createdUser.getId());
+        target = client.target(baseUrl).path("elo-api/user/" + createdUser.getId());
         Response getByIdResponseAfterLoggingOut = target.request(MediaType.APPLICATION_JSON_TYPE).get(Response.class);
         Assert.assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), getByIdResponseAfterLoggingOut.getStatus());
 

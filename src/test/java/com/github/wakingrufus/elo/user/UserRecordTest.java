@@ -36,13 +36,15 @@ public class UserRecordTest {
                 .password(password)
                 .build();
         actual = input.toDto();
+        log.info("expected: " + expected.toString());
+        log.info("actual: " + actual.toString());
         Assert.assertEquals("populated object converts correctly", expected, actual);
     }
 
     @Test
     public void testLombok() {
-        User instance = User.builder().build();
-        User instance2 = instance.toBuilder().build();
+        UserRecord instance = UserRecord.builder().build();
+        UserRecord instance2 = instance.toBuilder().build();
         Assert.assertEquals(instance.hashCode(), instance2.hashCode());
         Assert.assertEquals(instance, instance2);
     }

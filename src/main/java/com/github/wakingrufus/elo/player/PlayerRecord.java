@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-@DynamoDBTable(tableName = "Player")
+@DynamoDBTable(tableName = "EloPlayer")
 public class PlayerRecord {
 
     private String userId;
@@ -22,7 +22,7 @@ public class PlayerRecord {
     private int wins;
     private int losses;
 
-     Player toDto() {
+    Player toDto() {
         return Player.builder()
                 .id(getId())
                 .userId(getUserId())

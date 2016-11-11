@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-@DynamoDBTable(tableName = "League")
+@DynamoDBTable(tableName = "EloLeague")
 public class LeagueRecord {
     @DynamoDBHashKey
     private String id;
