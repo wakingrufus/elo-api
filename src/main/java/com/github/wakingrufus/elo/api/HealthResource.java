@@ -3,6 +3,7 @@ package com.github.wakingrufus.elo.api;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Singleton;
 import javax.ws.rs.GET;
@@ -16,7 +17,7 @@ import javax.ws.rs.Produces;
 public class HealthResource {
 
     @GET
-    @RolesAllowed("all")
+    @PermitAll
     @Produces("application/json")
     @ApiOperation(value = "health", produces = "text/plain")
     public String checkHealth() {
