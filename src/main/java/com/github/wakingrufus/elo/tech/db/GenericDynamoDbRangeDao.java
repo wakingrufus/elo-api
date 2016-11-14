@@ -29,8 +29,8 @@ public class GenericDynamoDbRangeDao<T, K, R> {
         return toCreate;
     }
 
-    public T findOne(K id) {
-        return tableMapper.load(id);
+    public T findOne(R bucket,K id) {
+      return   tableMapper.load(id,bucket);
     }
 
     public void delete(T toDelete) {

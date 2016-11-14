@@ -2,7 +2,12 @@ package com.github.wakingrufus.elo.tech;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.glassfish.jersey.client.ClientResponse;
+import org.glassfish.jersey.client.JerseyClientBuilder;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -31,6 +36,21 @@ public class IpFinder {
             }
         } catch (SocketException | NullPointerException e) {
             e.printStackTrace();
+        }
+        Client client = JerseyClientBuilder.createClient();
+
+        WebTarget target = client.target("http://169.254.169.254/latest/meta-data/public-hostname");
+        ClientResponse response = null;
+        try {
+            response = target.request(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        } catch (Exception e) {
+            log.warn("error trying to get aws metadata");
+        }
+
+        if (response != null && response.getStatus() == 200) {
+            String output = response.getEntity().toString();
+            log.info("found AWS hostname: " + output);
+            ip = output;
         }
         return ip;
     }

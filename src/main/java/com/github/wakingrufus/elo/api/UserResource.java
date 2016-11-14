@@ -59,7 +59,7 @@ public class UserResource {
         if (user == null) {
             throw new ResourceNotFoundException("No user with id " + id);
         }
-        return userService.getById(id);
+        return user;
     }
 
 }

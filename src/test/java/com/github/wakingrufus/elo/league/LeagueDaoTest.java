@@ -13,6 +13,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -48,6 +49,46 @@ public class LeagueDaoTest {
         LeagueRecord actual = instance.findOne(uuid.toString());
 
         Assert.assertEquals(record, actual);
+        server.stop();
+    }
+
+    @Test
+    public void testFindByType() throws Exception {
+        AWSCredentials credentials = new BasicAWSCredentials("qwe", "qwe");
+        AmazonDynamoDB client = new AmazonDynamoDBClient(credentials);
+
+        client.setEndpoint("http://localhost:3210");
+
+        DynamoDbClientFactory clientFactory = Mockito.mock(DynamoDbClientFactory.class);
+        Mockito.when(clientFactory.client()).thenReturn(client);
+
+
+        SQLite.setLibraryPath((this.getClass().getClassLoader().getResource("lib").getPath()));
+        final String[] localArgs = {"-inMemory", "-port", "3210"};
+        DynamoDBProxyServer server = ServerRunner.createServerFromCommandLineArgs(localArgs);
+        server.start();
+
+        log.info("tables: ");
+        client.listTables().getTableNames().forEach(log::info);
+
+        UUID uuid = UUID.randomUUID();
+        LeagueRecord record = LeagueRecord.builder()
+                .id(uuid.toString())
+                .name("foosball singles")
+                .gameType(GameType.FOOSBALL)
+                .teamSize(1).build();
+
+        LeagueDao instance = new LeagueDao(clientFactory);
+        LeagueRecord created = instance.create(record);
+        log.info("created league record:" + created.toString());
+        List<LeagueRecord> actuals = instance.byType(record.getGameType());
+
+        LeagueRecord actual = actuals.get(0);
+        log.info("expected: " + record.toString());
+        log.info("actual:   " + actual.toString());
+        Assert.assertEquals("has same id", record.getId(), actual.getId());
+        Assert.assertNull("lookup does not have name data", actual.getName());
+        Assert.assertEquals("has same game type", record.getGameType(), actual.getGameType());
         server.stop();
     }
 

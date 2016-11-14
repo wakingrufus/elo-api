@@ -3,31 +3,31 @@ package com.github.wakingrufus.elo.player;
 import org.jvnet.hk2.annotations.Service;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Singleton
 public class PlayerService {
     private final PlayerDao playerDao;
-    private final PlayerLookupDao playerLookupDao;
 
     @Inject
-    public PlayerService(PlayerDao playerDao, PlayerLookupDao playerLookupDao) {
+    public PlayerService(PlayerDao playerDao) {
         this.playerDao = playerDao;
-        this.playerLookupDao = playerLookupDao;
     }
 
     public Collection<Player> getPlayersForLeague(String leagueId) {
-        Collection<PlayerLookup> lookupRecords = playerLookupDao.findByPartition(leagueId);
+        Collection<PlayerRecord> lookupRecords = playerDao.lookupByLeague(leagueId);
         List<PlayerRecord> playerRecords = lookupRecords.stream().map(lookupRecord -> playerDao.findOne(lookupRecord.getId())).collect(Collectors.toList());
         List<Player> players = playerRecords.stream().map(PlayerRecord::toDto).collect(Collectors.toList());
         return players;
     }
 
     public Collection<Player> getPlayersForUser(String userId) {
-        Collection<PlayerLookup> lookupRecords = playerLookupDao.findByPartition(userId);
+        Collection<PlayerRecord> lookupRecords = playerDao.lookupByUser(userId);
         List<PlayerRecord> playerRecords = lookupRecords.stream().map(lookupRecord -> playerDao.findOne(lookupRecord.getId())).collect(Collectors.toList());
         List<Player> players = playerRecords.stream().map(PlayerRecord::toDto).collect(Collectors.toList());
         return players;
@@ -36,8 +36,6 @@ public class PlayerService {
     public Player create(Player player) {
         Player toCreate = player.toBuilder().id(UUID.randomUUID().toString()).build();
         PlayerRecord createdRecord = playerDao.create(toCreate.toRecord());
-        playerLookupDao.create(PlayerLookup.builder().bucket(createdRecord.getLeagueId()).id(createdRecord.getId()).build());
-        playerLookupDao.create(PlayerLookup.builder().bucket(createdRecord.getUserId()).id(createdRecord.getId()).build());
         return createdRecord.toDto();
     }
 
