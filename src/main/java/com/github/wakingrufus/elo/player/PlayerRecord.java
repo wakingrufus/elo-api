@@ -1,5 +1,8 @@
 package com.github.wakingrufus.elo.player;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,10 +15,13 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 @DynamoDBTable(tableName = "EloPlayer")
 public class PlayerRecord {
-
+    @DynamoDBHashKey
+    @DynamoDBIndexRangeKey(globalSecondaryIndexNames = {"PlayerByUser", "PlayerByLeague"})
+    private String id;
+    @DynamoDBIndexHashKey(globalSecondaryIndexName = "PlayerByUser")
     private String userId;
     private boolean admin;
-    private String id;
+    @DynamoDBIndexHashKey(globalSecondaryIndexName = "PlayerByLeague")
     private String leagueId;
     private int currentRating;
     private int gamesPlayed;

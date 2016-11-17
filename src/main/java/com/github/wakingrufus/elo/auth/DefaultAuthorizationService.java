@@ -65,7 +65,16 @@ public class DefaultAuthorizationService implements AuthorizationService {
 
     public User authenticate(String token) {
         log.debug("authenticating user with token: " + token);
-        return userService.getById(sessionDao.findOne(token).getUserId());
+        User user = null;
+        SessionRecord session = sessionDao.findOne(token);
+        if (session != null && session.getUserId() != null) {
+            user = userService.getById(session.getUserId());
+        } else {
+            if (session != null) {
+                log.debug("Invalid session: " + session.toString());
+            }
+        }
+        return user;
     }
 
 

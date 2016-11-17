@@ -2,12 +2,14 @@ package com.github.wakingrufus.elo.league;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.wakingrufus.elo.tech.ObjectMapperFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.UUID;
 
+@Slf4j
 public class LeagueTest {
     @Test
     public void testJson() throws IOException {
@@ -54,5 +56,7 @@ public class LeagueTest {
         League league = League.builder().build();
         League league2 = league.toBuilder().build();
         Assert.assertEquals(league.hashCode(), league2.hashCode());
+        String s = League.builder().toString();
+        log.trace(s);
     }
 }

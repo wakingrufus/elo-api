@@ -42,29 +42,34 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         try {
 
             User user = authorizationService.authenticate(token);
+            if (user == null) {
+                log.debug("no user found with sessionId: " + token);
+                requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
+            } else {
 
-            requestContext.setSecurityContext(new SecurityContext() {
-                @Override
-                public Principal getUserPrincipal() {
-                    return () -> user.getEmail();
-                }
+                requestContext.setSecurityContext(new SecurityContext() {
+                    @Override
+                    public Principal getUserPrincipal() {
+                        return () -> user.getEmail();
+                    }
 
-                @Override
-                public boolean isUserInRole(String role) {
-                    return true;
-                }
+                    @Override
+                    public boolean isUserInRole(String role) {
+                        return true;
+                    }
 
-                @Override
-                public boolean isSecure() {
-                    return true;
-                }
+                    @Override
+                    public boolean isSecure() {
+                        return true;
+                    }
 
-                @Override
-                public String getAuthenticationScheme() {
-                    return SecurityContext.BASIC_AUTH;
-                }
-            });
-            requestContext.getHeaders().put("userId", Collections.singletonList(user.getId()));
+                    @Override
+                    public String getAuthenticationScheme() {
+                        return SecurityContext.BASIC_AUTH;
+                    }
+                });
+                requestContext.getHeaders().put("userId", Collections.singletonList(user.getId()));
+            }
 
         } catch (Exception e) {
             log.debug(e.getLocalizedMessage(), e);

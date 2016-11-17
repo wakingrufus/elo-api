@@ -23,15 +23,13 @@ public class PlayerServiceTest {
     @Test
     public void create() throws Exception {
         PlayerDao playerDao = Mockito.mock(PlayerDao.class);
-        PlayerLookupDao playerLookupDao = Mockito.mock(PlayerLookupDao.class);
         Mockito.when(playerDao.create(Mockito.any(PlayerRecord.class))).then(AdditionalAnswers.returnsFirstArg());
-        Mockito.when(playerLookupDao.create(Mockito.any(PlayerLookup.class))).then(AdditionalAnswers.returnsFirstArg());
 
         Player toCreate = Player.builder()
                 .userId(UUID.randomUUID().toString())
                 .build();
 
-        PlayerService instance = new PlayerService(playerDao, playerLookupDao);
+        PlayerService instance = new PlayerService(playerDao);
         Player created = instance.create(toCreate);
 
         Assert.assertEquals("user id is saved", toCreate.getUserId(), created.getUserId());
@@ -56,11 +54,10 @@ public class PlayerServiceTest {
 
         // mocks
         PlayerDao playerDao = Mockito.mock(PlayerDao.class);
-        PlayerLookupDao playerLookupDao = Mockito.mock(PlayerLookupDao.class);
         Mockito.when(playerDao.update(Mockito.any(PlayerRecord.class))).then(AdditionalAnswers.returnsFirstArg());
         Mockito.when(playerDao.findOne(id)).thenReturn(existingRecord);
 
-        PlayerService instance = new PlayerService(playerDao, playerLookupDao);
+        PlayerService instance = new PlayerService(playerDao);
         Player updated = instance.update(id, ratingAdjustment, newGames, newWins, newLosses);
 
         Assert.assertEquals(existingRecord.getCurrentRating() + ratingAdjustment, updated.getCurrentRating());

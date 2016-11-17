@@ -2,10 +2,12 @@ import com.almworks.sqlite4java.SQLite;
 import com.amazonaws.services.dynamodbv2.local.main.ServerRunner;
 import com.amazonaws.services.dynamodbv2.local.server.DynamoDBProxyServer;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.github.wakingrufus.elo.Main;
 import com.github.wakingrufus.elo.auth.LoginRequest;
 import com.github.wakingrufus.elo.auth.Session;
+import com.github.wakingrufus.elo.league.GameType;
+import com.github.wakingrufus.elo.league.League;
 import com.github.wakingrufus.elo.tech.ObjectMapperFactory;
 import com.github.wakingrufus.elo.user.User;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +22,10 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -85,7 +89,7 @@ public class IntegrationTest {
         ObjectMapper mapper = new ObjectMapperFactory().buildObjectMapper();
 
         Client client = JerseyClientBuilder.newBuilder().build();
-        JacksonJaxbJsonProvider jacksonJaxbJsonProvider = new JacksonJaxbJsonProvider();
+        JacksonJsonProvider jacksonJaxbJsonProvider = new JacksonJsonProvider();
         jacksonJaxbJsonProvider.setMapper(mapper);
         client.register(jacksonJaxbJsonProvider);
         try {
@@ -118,11 +122,56 @@ public class IntegrationTest {
         // get by id (auth)
         log.info("get by user id (authorized)");
         target = client.target(baseUrl).path("elo-api/user/" + createdUser.getId());
-        User getUser = target.request(MediaType.APPLICATION_JSON_TYPE).header("Authorization", "Bearer " + createdSession.getId())
+        User getUser = target.request(MediaType.APPLICATION_JSON_TYPE)
+                .header("Authorization", "Bearer " + createdSession.getId())
                 .get(User.class);
         Assert.assertNotNull("user is found", getUser);
         Assert.assertEquals(user.getEmail(), getUser.getEmail());
 
+        /*
+         * League Tests
+         */
+
+        log.info("get game types");
+        target = client.target(baseUrl).path("elo-api/leagues/types");
+        GameType[] gameTypesArr = target.request(MediaType.APPLICATION_JSON_TYPE)
+                .header("Authorization", "Bearer " + createdSession.getId()).get(GameType[].class);
+
+        GameType gameType = (gameTypesArr[0]);
+        log.info("create league");
+        League newLeague = League.builder()
+                .gameType(gameType)
+                .kfactorBase(32)
+                .name("test singles league")
+                .startingRating(1500)
+                .xi(1000)
+                .trialPeriod(10)
+                .trialKFactorMultiplier(2)
+                .teamSize(1)
+                .build();
+        target = client.target(baseUrl).path("elo-api/leagues");
+        League createdLeague = target.request(MediaType.APPLICATION_JSON_TYPE)
+                .header("Authorization", "Bearer " + createdSession.getId())
+                .post(Entity.entity(newLeague, MediaType.APPLICATION_JSON_TYPE), League.class);
+        log.info("league id:" + createdLeague.getId());
+
+        log.info("get league by id");
+        target = client.target(baseUrl).path("elo-api/leagues/" + createdLeague.getId());
+        League leagueFromGet = target.request(MediaType.APPLICATION_JSON_TYPE)
+                .header("Authorization", "Bearer " + createdSession.getId()).get(League.class);
+        Assert.assertEquals(createdLeague.getId(), leagueFromGet.getId());
+
+        log.info("get leagues by game type id");
+        target = client.target(baseUrl).path("elo-api/leagues").queryParam("typeId", createdLeague.getGameType().getId());
+        League[] leaguesByGameTypeArr = target.request(MediaType.APPLICATION_JSON_TYPE)
+                .header("Authorization", "Bearer " + createdSession.getId()).get(League[].class);
+        List<League> leaguesList = Arrays.asList(leaguesByGameTypeArr);
+        Assert.assertEquals(1, leaguesList.size());
+
+
+        /*
+         * Log out tests
+         */
         log.info("log out");
         target = client.target(baseUrl).path("elo-api/session/" + createdSession.getId());
         Response logoutResponse = target.request(MediaType.APPLICATION_JSON_TYPE)
