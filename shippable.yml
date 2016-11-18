@@ -21,7 +21,7 @@ before_build:
 build:
   ci:
     - gradle wrapper
-    - ./gradlew clean test jacocoTestReport jacobo integrationTest installDist
+    - ./gradlew clean test jacocoTestReport integrationTest installDist
   on_failure:
     - cp build/test-results/*.xml shippable/testresults
   on_success:
