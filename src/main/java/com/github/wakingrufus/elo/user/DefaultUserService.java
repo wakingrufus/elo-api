@@ -12,14 +12,12 @@ import javax.inject.Singleton;
 @Slf4j
 public class DefaultUserService implements UserService {
     private final UserDao userDao;
-    private final DynamoUserEmailLookupDao emailLookupDao;
 
     @Inject
-    public DefaultUserService(UserDao userDao, DynamoUserEmailLookupDao emailLookupDao) {
+    public DefaultUserService(UserDao userDao) {
         log.debug("creating user service");
         this.userDao = userDao;
         log.debug("userDao = " + userDao.toString());
-        this.emailLookupDao = emailLookupDao;
     }
 
 
@@ -36,7 +34,7 @@ public class DefaultUserService implements UserService {
     public User getByEmail(String email) {
         User user = null;
         UserRecord userRecord = null;
-        UserEmailLookup lookup = emailLookupDao.findOne(email);
+        UserRecord lookup = userDao.byEmail(email);
         if (lookup != null) {
             userRecord = userDao.findOne(lookup.getId());
         }

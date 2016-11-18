@@ -15,18 +15,16 @@ import java.util.UUID;
 @Singleton
 @Slf4j
 public class DefaultCreateUserService implements CreateUserService {
-    private final DynamoUserEmailLookupDao emailLookupDao;
     private final UserDao userDao;
 
     @Inject
-    public DefaultCreateUserService(DynamoUserEmailLookupDao emailLookupDao, UserDao userDao) {
-        this.emailLookupDao = emailLookupDao;
+    public DefaultCreateUserService(UserDao userDao) {
         this.userDao = userDao;
     }
 
     @Override
     public User createUser(User user) {
-        if (emailLookupDao.findOne(user.getEmail()) != null) {
+        if (userDao.byEmail(user.getEmail()) != null) {
             throw new UsernameExistsException("account with email [" + user.getEmail() + "] already exists. please choose another.");
         }
         MessageDigest digest = null;
@@ -51,7 +49,6 @@ public class DefaultCreateUserService implements CreateUserService {
         User createdUser = createdUserRecord.toDto();
         log.debug("created user: " + createdUser.toString());
 
-        emailLookupDao.create(new UserEmailLookup(createdUser.getEmail(), createdUser.getId()));
         // don't send password back
         return createdUser.toBuilder().password(null).build();
     }

@@ -35,7 +35,7 @@ public class JerseyApplication extends ResourceConfig {
             protected void configure() {
 
                 //      bind(DefaultUserService.class).to(UserService.class).in(Singleton.class);
-                //    bind(DynamoUserDao.class).to(UserDao.class).in(Singleton.class);
+                //    bind(UserDao.class).to(UserDao.class).in(Singleton.class);
                 //    bind(InMemoryRolesDao.class).to(RolesDao.class).in(Singleton.class);
                 //    bind(DefaultAuthorizationService.class).to(AuthorizationService.class).in(Singleton.class);
                 //    bind(InMemorySessionDao.class).to(SessionDao.class).in(Singleton.class);

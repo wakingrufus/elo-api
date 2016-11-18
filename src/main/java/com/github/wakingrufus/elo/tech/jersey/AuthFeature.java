@@ -7,8 +7,7 @@ import com.github.wakingrufus.elo.auth.DynamoSessionDao;
 import com.github.wakingrufus.elo.config.AppConfig;
 import com.github.wakingrufus.elo.tech.db.DynamoDbClientFactory;
 import com.github.wakingrufus.elo.user.DefaultUserService;
-import com.github.wakingrufus.elo.user.DynamoUserDao;
-import com.github.wakingrufus.elo.user.DynamoUserEmailLookupDao;
+import com.github.wakingrufus.elo.user.UserDao;
 import com.github.wakingrufus.elo.user.UserService;
 
 import javax.annotation.security.PermitAll;
@@ -28,7 +27,7 @@ public class AuthFeature implements DynamicFeature {
     public AuthFeature() {
         AppConfig appConfig = new AppConfig();
         DynamoDbClientFactory clientFactory = new DynamoDbClientFactory(appConfig);
-        this.userService = new DefaultUserService(new DynamoUserDao(clientFactory), new DynamoUserEmailLookupDao(clientFactory));
+        this.userService = new DefaultUserService(new UserDao(clientFactory));
         this.authorizationService = new DefaultAuthorizationService(new DynamoSessionDao(clientFactory), userService);
 
 
