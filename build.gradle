@@ -5,16 +5,15 @@ plugins {
     id "jacoco"
 }
 
-
 mainClassName = 'com.github.wakingrufus.elo.Main'
 group = 'com.github.wakingrufus'
-version = '0.4.0'
+version = '0.4.1'
 
 repositories {
 
     mavenCentral()
     maven { url 'http://clojars.org/repo' }
-    maven { url 'http://dynamodb-local.s3-website-us-west-2.amazonaws.com/release'}
+    maven { url 'http://dynamodb-local.s3-website-us-west-2.amazonaws.com/release' }
 }
 
 jar {
@@ -33,7 +32,7 @@ dependencies {
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.7.+'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.7.+'
     compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.7.+'
-    compile (group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jaxrs', version: '2.+'){
+    compile(group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jaxrs', version: '2.+') {
         exclude group: 'com.fasterxml.jackson.core'
     }
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.7.+'
@@ -62,7 +61,9 @@ dependencies {
 tasks.withType(JavaCompile) {
     options.compilerArgs << '-parameters'
 }
-
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.2'
+}
 sourceSets {
     integrationTest {
         java {
@@ -100,5 +101,11 @@ test.dependsOn copyRuntimeLibs
 distZip {
     into('/') {
         from 'deploy'
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
     }
 }

@@ -19,7 +19,7 @@ import javax.ws.rs.core.Context;
 import java.util.Arrays;
 import java.util.List;
 
-@Api(value = "User")
+@Api(value = "League")
 @Path("leagues")
 @Singleton
 @Slf4j
