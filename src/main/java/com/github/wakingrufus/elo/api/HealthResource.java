@@ -18,7 +18,7 @@ public class HealthResource {
 
     @GET
     @PermitAll
-    @Produces("application/json")
+    @Produces("text/plain")
     @ApiOperation(value = "health", produces = "text/plain")
     public String checkHealth() {
         return "OK";

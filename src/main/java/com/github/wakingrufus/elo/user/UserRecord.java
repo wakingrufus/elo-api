@@ -9,7 +9,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,7 +16,6 @@ import lombok.NoArgsConstructor;
 @DynamoDBTable(tableName = "EloUser")
 public class UserRecord {
     @DynamoDBHashKey
-
     @DynamoDBIndexRangeKey(globalSecondaryIndexName = "UserByEmail")
     private String id;
     private String name;

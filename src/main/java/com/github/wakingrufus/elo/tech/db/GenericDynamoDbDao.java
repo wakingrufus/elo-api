@@ -12,8 +12,8 @@ public class GenericDynamoDbDao<T, K> {
     public GenericDynamoDbDao(DynamoDbClientFactory clientFactory, Class<T> clazz) {
         DynamoDBTableMapper<T, K, ?> tableMapper = new DynamoDBMapper(clientFactory.client()).newTableMapper(clazz);
         log.info("Building table for " + clazz.getName());
-        tableMapper.deleteTableIfExists();
-        tableMapper.createTableIfNotExists(new ProvisionedThroughput().withReadCapacityUnits(1L).withWriteCapacityUnits(1L));
+        boolean tableIfNotExists = tableMapper.createTableIfNotExists(new ProvisionedThroughput().withReadCapacityUnits(1L).withWriteCapacityUnits(1L));
+        log.info("table created?: "+tableIfNotExists);
         this.tableMapper = tableMapper;
     }
 

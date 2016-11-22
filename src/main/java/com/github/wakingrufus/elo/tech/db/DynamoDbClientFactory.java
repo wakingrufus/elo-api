@@ -1,5 +1,7 @@
 package com.github.wakingrufus.elo.tech.db;
 
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.github.wakingrufus.elo.config.AppConfig;
@@ -22,6 +24,8 @@ public class DynamoDbClientFactory {
             client = new AmazonDynamoDBClient();
             if (appConfig.getDbUrl() != null) {
                 client.setEndpoint(appConfig.getDbUrl());
+            }else {
+                client.setRegion(Region.getRegion(Regions.US_WEST_2));
             }
         }
         return client;
