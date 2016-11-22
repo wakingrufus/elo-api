@@ -3,11 +3,12 @@ plugins {
     id "application"
     id "idea"
     id "jacoco"
+    id "de.undercouch.download" version "3.1.2"
 }
 
 mainClassName = 'com.github.wakingrufus.elo.Main'
 group = 'com.github.wakingrufus'
-version = '0.4.1'
+version = '0.5.0'
 
 repositories {
 
@@ -109,3 +110,23 @@ jacocoTestReport {
         xml.enabled true
     }
 }
+
+
+import de.undercouch.gradle.tasks.download.Download
+
+task downloadSwaggerUi(type: Download) {
+    src 'https://github.com/swagger-api/swagger-ui/archive/v2.2.6.zip'
+    dest "${buildDir}/swagger-ui/swaggerui.zip"
+}
+
+task unzipSwagger(dependsOn: downloadSwaggerUi, type: Copy) {
+    from zipTree(downloadSwaggerUi.dest)
+    into "${buildDir}/swagger-ui/"
+}
+
+task copySwagger(dependsOn: unzipSwagger, type: Copy) {
+    from file("${buildDir}/swagger-ui/swagger-ui-2.2.6/dist")
+    into "${buildDir}/resources/main/swagger-ui"
+}
+
+processResources.dependsOn copySwagger

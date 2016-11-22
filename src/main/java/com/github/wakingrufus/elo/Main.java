@@ -22,7 +22,7 @@ public class Main {
         BeanConfig beanConfig = new BeanConfig();
         beanConfig.setVersion("BETA");
         beanConfig.setSchemes(new String[]{"http"});
-        beanConfig.setHost(host);
+        beanConfig.setHost("");
         beanConfig.setBasePath("/elo-api");
         beanConfig.setResourcePackage("com.github.wakingrufus.elo.api");
         beanConfig.setTitle("ELO API");
@@ -34,7 +34,6 @@ public class Main {
         HttpServer httpServer = GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), new JerseyApplication(), locator);
 
         try {
-            //       HttpServer   httpServer = GrizzlyWebContainerFactory.create(URI.create(BASE_URI), sc, null, null);
             httpServer.start();
             CLStaticHttpHandler staticHttpHandler = new CLStaticHttpHandler(Main.class.getClassLoader(), "swagger-ui/");
             httpServer.getServerConfiguration().addHttpHandler(staticHttpHandler, "/docs");

@@ -54,9 +54,7 @@ public class DefaultAuthorizationService implements AuthorizationService {
                 session = createdSessionRecord.toDto();
             }
 
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
