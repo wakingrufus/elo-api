@@ -29,8 +29,6 @@ public class AuthFeature implements DynamicFeature {
         DynamoDbClientFactory clientFactory = new DynamoDbClientFactory(appConfig);
         this.userService = new DefaultUserService(new UserDao(clientFactory));
         this.authorizationService = new DefaultAuthorizationService(new DynamoSessionDao(clientFactory), userService);
-
-
     }
 
     public void configure(ResourceInfo resourceInfo, FeatureContext context) {

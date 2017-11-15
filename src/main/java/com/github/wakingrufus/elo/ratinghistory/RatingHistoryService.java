@@ -7,41 +7,28 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class RatingHistoryService {
     private final GamePlayerRatingChangeDao dao;
-    private final GamePlayerRatingChangeLookupDao lookupDao;
 
     @Inject
-    public RatingHistoryService(GamePlayerRatingChangeDao dao, GamePlayerRatingChangeLookupDao lookupDao) {
+    public RatingHistoryService(GamePlayerRatingChangeDao dao) {
         this.dao = dao;
-        this.lookupDao = lookupDao;
     }
 
     public RatingHistoryItem create(RatingHistoryItem ratingHistoryItem) {
         RatingHistoryItem toCreate = ratingHistoryItem.toBuilder().id(UUID.randomUUID().toString()).build();
         RatingHistoryItemRecord createdRecord = dao.create(toCreate.toRecord());
-        lookupDao.create(GamePlayerRatingChangeLookup.builder().bucket(createdRecord.getPlayerId())
-                .id(createdRecord.getId()).build());
         return createdRecord.toDto();
     }
 
     public List<RatingHistoryItem> getByPlayer(String playerId) {
-        Collection<GamePlayerRatingChangeLookup> byPartition = lookupDao.findByPartition(playerId);
-        List<RatingHistoryItem> ratingHistoryItemList = new ArrayList<>();
-        for (GamePlayerRatingChangeLookup lookup : byPartition) {
-            ratingHistoryItemList.add(dao.findOne(lookup.getId()).toDto());
-        }
-        return ratingHistoryItemList;
+       return dao.getByPlayer(playerId).stream().map(RatingHistoryItemRecord::toDto).collect(Collectors.toList());
     }
 
     public void clearHistoryForPlayer(String playerId) {
-        Collection<GamePlayerRatingChangeLookup> byPartition = lookupDao.findByPartition(playerId);
-        for (GamePlayerRatingChangeLookup lookup : byPartition) {
-            RatingHistoryItemRecord one = dao.findOne(lookup.getId());
-            dao.delete(one);
-            lookupDao.delete(lookup);
-        }
+        dao.getByPlayer(playerId).forEach(dao::delete);
     }
 }

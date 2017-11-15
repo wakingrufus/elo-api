@@ -1,6 +1,8 @@
 package com.github.wakingrufus.elo.game;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +21,9 @@ import java.util.List;
 @DynamoDBTable(tableName = "EloGame")
 public class GameRecord {
     @DynamoDBHashKey
+    @DynamoDBIndexRangeKey(globalSecondaryIndexName = "GameByLeague")
     private String id;
+    @DynamoDBIndexHashKey(globalSecondaryIndexName = "GameByLeague")
     private String leagueId;
     private Date entryDate;
     private List<String> team1PlayerIds;

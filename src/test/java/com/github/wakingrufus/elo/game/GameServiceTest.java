@@ -106,7 +106,7 @@ public class GameServiceTest {
         Mockito.when(playerService.getPlayer(player2.getId())).thenReturn(player2);
 
         // instance
-        GameService instance = new GameService(null, null, null, playerService, scoreCalculatorFactory,
+        DefaultGameService instance = new DefaultGameService(null, null, playerService, scoreCalculatorFactory,
                 ratingHistoryService, adjustmentCalculatorFactory, kfactorCalculatorFactory);
 
         instance.processGame(league, game);
